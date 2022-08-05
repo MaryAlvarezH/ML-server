@@ -4,24 +4,44 @@
             <a class="main-topic" href="#documentation">Documentation</a>
             <a class="sub-topic" href="#items">Items</a>
             <a class="topic" href="#get-items">GET items</a>
+            <a class="topic" href="#get-item">GET item</a>
         </div>
     </div>
     <div class="content">
         <div class="content-details">
         <h2 id="documentation">Documentation</h2>
-        <h3 id="items">Items</h3>
-        <div id="get-items" class="topic">
-            <div class="title">
-                <i class="fa fa-circle"></i>
-                <div class="text">
-                    <h4> GET Items: </h4>
-                    <span> To get the list of items </span>
+        <section id="items">
+            <h3>Items</h3>
+            <div id="get-items" class="topic">
+                <div class="title">
+                    <i class="fa fa-circle"></i>
+                    <div class="text">
+                        <h4> GET Items: </h4>
+                        <span> To get the list of items </span>
+                    </div>
                 </div>
+                <span class="endpoint">GET /items?q=case</span>
+                <span class="result">Response:</span>
+                <span class="status">Status: 200 OK</span>
+                <pre class="prettyprint"><code>{{ doc.getItemsJson }}</code></pre>
             </div>
-            <span class="endpoint">GET http://localhost:3000/api/items</span>
-            <span class="result">Response:</span>
-            <span class="status">Status: 200 OK</span>
-            <pre class="prettyprint"><code>{{ doc.getItemsJson }}</code></pre>
-        </div>
+        </section>
+        
+        <section id="get-item">
+            <div  class="topic">
+                <div class="title">
+                    <i class="fa fa-circle"></i>
+                    <div class="text">
+                        <h4> GET Item: </h4>
+                        <span> To get item details </span>
+                    </div>
+                </div>
+                <span class="endpoint">GET /items/:id</span>
+                <span class="result">Response:</span>
+                <span class="status">Status: 200 OK</span>
+                <pre class="prettyprint"><code>{{ doc.getItemJson }}</code></pre>
+            </div>
+        </section>
+  
     </div>
 </div>
