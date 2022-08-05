@@ -1,13 +1,13 @@
 const axios = require("axios");
 
-const baseUrl = "https://api.mercadolibre.com/sites/MLA";
+const baseUrl = "https://api.mercadolibre.com";
 
-exports.getItems = async (req, res) => {
+const getItems = async (req, res) => {
   const { q } = req.query;
   const limit = 4;
 
   axios
-    .get(`${baseUrl}/search?q=${q}&limit=${limit}`)
+    .get(`${baseUrl}/sites/MLA/search?q=${q}&limit=${limit}`)
     .then((response) => {
       const results = response.data.results;
 
@@ -32,14 +32,48 @@ exports.getItems = async (req, res) => {
         items.push(itemDetails);
       }
 
-      const resp = {
-        author,
-        categories,
-        items,
-      };
-      res.send(resp);
+      res.status(200).send({ author, categories, items });
     })
     .catch((error) => {
       console.log(error);
     });
+};
+
+const getItem = async (req, res) => {
+  const itemID = req.params.id;
+
+  axios
+    .all([
+      axios.get(`${baseUrl}/items/${itemID}`),
+      axios.get(`${baseUrl}/items/${itemID}/description`),
+    ])
+    .then(
+      axios.spread((resp1, resp2) => {
+        const author = { name: "María", lastname: "Álvarez" };
+        const itemData = resp1.data;
+        const itemDetails = resp2.data;
+
+        const item = {
+          id: itemData.id,
+          title: itemData.title,
+          price: {
+            amount: itemData.price,
+            currency: itemData.currency_id,
+            decimals: itemData.decimlas | 0,
+          },
+          picture:
+            itemData.pictures?.length > 0 ? itemData.pictures[0].url : null,
+          condition: itemData.condition,
+          free_shipping: itemData.shipping.free_shipping,
+          sold_quantity: itemData.sold_quantity,
+          description: itemDetails.plain_text,
+        };
+        res.status(200).send({ author, item });
+      })
+    );
+};
+
+module.exports = {
+  getItems,
+  getItem,
 };
