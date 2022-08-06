@@ -2,6 +2,8 @@
   "name": "meli-server",
   "version": "1.0.0",
   "private": true,
+  "author": "María Álvarez",
+  "license": "MIT",
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node ./bin/www"
@@ -17,5 +19,8 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
+  },
+  "engines": {
+    "node": "16.16.0"
   }
 }
