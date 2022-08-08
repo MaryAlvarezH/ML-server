@@ -1,13 +1,13 @@
 const axios = require("axios");
 
-const baseUrl = "https://api.mercadolibre.com";
+const BASE_URL = "https://api.mercadolibre.com";
 
 const getItems = async (req, res) => {
   const { q } = req.query;
   const limit = 4;
 
   axios
-    .get(`${baseUrl}/sites/MLA/search?q=${q}&limit=${limit}`)
+    .get(`${BASE_URL}/sites/MLA/search?q=${q}&limit=${limit}`)
     .then((response) => {
       const results = response.data.results;
 
@@ -16,7 +16,6 @@ const getItems = async (req, res) => {
       const categories = [];
 
       for (const result of results) {
-        categories.push(result.category_id);
         const itemDetails = {
           id: result.id,
           title: result.title,
@@ -32,10 +31,35 @@ const getItems = async (req, res) => {
         items.push(itemDetails);
       }
 
+      // To get categories data it's necessary explore the results for 'available_filters' object
+      // and in the case of the value of available_filters was an empty array explore filters object
+      let categoryFilter = response.data.available_filters.find(
+        (i) => i.id === "category"
+      );
+
+      if (!categoryFilter) {
+        categoryFilter = response.data.filters.find((i) => i.id === "category");
+      }
+
+      if (categoryFilter) {
+        const categoriesList = categoryFilter.values;
+
+        const categoriesLimit = 5;
+        const categoriesLength =
+          categoriesList.length <= categoriesLimit
+            ? categoriesList.length
+            : categoriesLimit;
+
+        for (let index = 0; index < categoriesLength; index++) {
+          const category = categoriesList[index].name;
+          categories.push(category);
+        }
+      }
+
       res.status(200).send({ author, categories, items });
     })
     .catch((error) => {
-      console.log(error);
+      res.status(500).send(error);
     });
 };
 
@@ -44,8 +68,8 @@ const getItem = async (req, res) => {
 
   axios
     .all([
-      axios.get(`${baseUrl}/items/${itemID}`),
-      axios.get(`${baseUrl}/items/${itemID}/description`),
+      axios.get(`${BASE_URL}/items/${itemID}`),
+      axios.get(`${BASE_URL}/items/${itemID}/description`),
     ])
     .then(
       axios.spread((resp1, resp2) => {
@@ -70,7 +94,10 @@ const getItem = async (req, res) => {
         };
         res.status(200).send({ author, item });
       })
-    );
+    )
+    .catch((error) => {
+      res.status(500).send(error);
+    });
 };
 
 module.exports = {
